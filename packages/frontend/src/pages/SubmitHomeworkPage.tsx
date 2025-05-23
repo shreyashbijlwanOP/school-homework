@@ -37,7 +37,7 @@ export default function SubmitHomeworkPage() {
       try {
         await new Promise<void>((resolve, reject) => {
           const xhr = new XMLHttpRequest();
-          xhr.open('POST', 'http://localhost:3333/api/upload');
+          xhr.open('POST', 'https://school-homework-o29e.onrender.com/api/upload');
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable) {
               const percent = Math.round((event.loaded / event.total) * 100);

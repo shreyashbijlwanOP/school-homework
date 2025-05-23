@@ -10,7 +10,7 @@ export function App() {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: 'http://192.168.52.55:3333/api/trpc',
+          url: 'https://school-homework-o29e.onrender.com/api/trpc',
           // You can pass any HTTP headers you wish here
           async headers() {
             return {};
