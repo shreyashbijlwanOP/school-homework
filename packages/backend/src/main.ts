@@ -8,8 +8,9 @@ import multer from 'multer';
 import { Request } from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import { authorizeMiddleware } from './utils/middleware';
 
-dotenv.config()
+dotenv.config();
 
 const app = express();
 connectToDatabase();
@@ -17,7 +18,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets', authorizeMiddleware, express.static(path.join(__dirname, 'assets')));
 
 // Configure multer to save files with their original extension
 const storage = multer.diskStorage({
@@ -33,6 +34,7 @@ const upload = multer({ storage });
 
 app.use(
   '/api/trpc',
+  authorizeMiddleware,
   trpcExpress.createExpressMiddleware({
     router: appAouter,
     createContext: createContext
@@ -43,7 +45,7 @@ app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to backend!' });
 });
 
-app.post('/api/upload', upload.single('file'), (req: Request, res) => {
+app.post('/api/upload', authorizeMiddleware, upload.single('file'), (req: Request, res) => {
   const file = req.file as Express.Multer.File | undefined;
   if (!file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -59,8 +61,8 @@ app.post('/api/upload', upload.single('file'), (req: Request, res) => {
   });
 });
 
-const port = process.env.PORT || 3333  ;
-const server = app.listen(Number(port),'0.0.0.0', () => {
+const port = process.env.PORT || 3333;
+const server = app.listen(Number(port), '0.0.0.0', () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });
 server.on('error', console.error);
